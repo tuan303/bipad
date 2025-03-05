@@ -22,6 +22,7 @@ export const bookings = pgTable("bookings", {
   bookedDate: timestamp("booked_date").notNull(),
   borrowerName: text("borrower_name").notNull(),
   purpose: text("purpose").notNull(),
+  quantity: integer("quantity").notNull(), // Số lượng iPad cần mượn
   status: text("status").notNull().default("active"), // active, completed, cancelled
 });
 

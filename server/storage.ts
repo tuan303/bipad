@@ -34,20 +34,24 @@ export class MemStorage implements IStorage {
   }
 
   private initSampleData() {
-    // Add sample iPads
-    const sampleDevices: InsertDevice[] = [
-      { name: "iPad 1", status: "available" },
-      { name: "iPad 2", status: "available" },
-      { name: "iPad 3", status: "available" },
-    ];
+    // Add 80 iPads
+    const sampleDevices: InsertDevice[] = Array.from({ length: 80 }, (_, i) => ({
+      name: `iPad ${i + 1}`,
+      status: "available"
+    }));
     sampleDevices.forEach(device => this.createDevice(device));
 
-    // Add school periods
+    // Add 9 school periods
     const samplePeriods: InsertPeriod[] = [
-      { name: "Period 1", startTime: "08:00", endTime: "08:45" },
-      { name: "Period 2", startTime: "08:50", endTime: "09:35" },
-      { name: "Period 3", startTime: "09:40", endTime: "10:25" },
-      { name: "Period 4", startTime: "10:30", endTime: "11:15" },
+      { name: "Tiết 1", startTime: "07:00", endTime: "07:45" },
+      { name: "Tiết 2", startTime: "07:50", endTime: "08:35" },
+      { name: "Tiết 3", startTime: "08:50", endTime: "09:35" },
+      { name: "Tiết 4", startTime: "09:50", endTime: "10:35" },
+      { name: "Tiết 5", startTime: "10:40", endTime: "11:25" },
+      { name: "Tiết 6", startTime: "13:30", endTime: "14:15" },
+      { name: "Tiết 7", startTime: "14:20", endTime: "15:05" },
+      { name: "Tiết 8", startTime: "15:20", endTime: "16:05" },
+      { name: "Tiết 9", startTime: "16:10", endTime: "16:55" }
     ];
     samplePeriods.forEach(period => this.createPeriod(period));
   }
@@ -70,7 +74,7 @@ export class MemStorage implements IStorage {
   async updateDeviceStatus(id: number, status: string): Promise<Device> {
     const device = await this.getDevice(id);
     if (!device) throw new Error("Device not found");
-    
+
     const updatedDevice = { ...device, status };
     this.devices.set(id, updatedDevice);
     return updatedDevice;

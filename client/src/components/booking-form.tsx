@@ -26,7 +26,7 @@ interface BookingFormProps {
 
 export function BookingForm({ deviceId, periodId, selectedDate, onSuccess }: BookingFormProps) {
   const { toast } = useToast();
-  
+
   const form = useForm({
     resolver: zodResolver(insertBookingSchema),
     defaultValues: {
@@ -35,6 +35,7 @@ export function BookingForm({ deviceId, periodId, selectedDate, onSuccess }: Boo
       bookedDate: selectedDate,
       borrowerName: "",
       purpose: "",
+      quantity: 1,
       status: "active"
     }
   });
@@ -49,14 +50,14 @@ export function BookingForm({ deviceId, periodId, selectedDate, onSuccess }: Boo
       queryClient.invalidateQueries({ queryKey: ["/api/devices"] });
       toast({
         title: "Success",
-        description: "Device booked successfully",
+        description: "Đăng ký mượn iPad thành công",
       });
       onSuccess();
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "Failed to book the device",
+        description: "Không thể đăng ký mượn iPad",
         variant: "destructive",
       });
     }
@@ -70,9 +71,30 @@ export function BookingForm({ deviceId, periodId, selectedDate, onSuccess }: Boo
           name="borrowerName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Your Name</FormLabel>
+              <FormLabel>Tên người mượn</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your name" {...field} />
+                <Input placeholder="Nhập tên của bạn" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="quantity"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Số lượng iPad cần mượn</FormLabel>
+              <FormControl>
+                <Input 
+                  type="number" 
+                  min="1"
+                  max="80"
+                  placeholder="Nhập số lượng" 
+                  {...field}
+                  onChange={e => field.onChange(parseInt(e.target.value))}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -84,10 +106,10 @@ export function BookingForm({ deviceId, periodId, selectedDate, onSuccess }: Boo
           name="purpose"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Purpose</FormLabel>
+              <FormLabel>Mục đích sử dụng</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Enter the purpose of borrowing"
+                  placeholder="Nhập mục đích sử dụng"
                   {...field} 
                 />
               </FormControl>
@@ -101,7 +123,7 @@ export function BookingForm({ deviceId, periodId, selectedDate, onSuccess }: Boo
           className="w-full"
           disabled={mutation.isPending}
         >
-          {mutation.isPending ? "Booking..." : "Book Device"}
+          {mutation.isPending ? "Đang đăng ký..." : "Đăng ký mượn"}
         </Button>
       </form>
     </Form>
