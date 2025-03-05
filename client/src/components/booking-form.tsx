@@ -34,6 +34,7 @@ export function BookingForm({ deviceId, periodId, selectedDate, onSuccess }: Boo
       periodId,
       bookedDate: selectedDate,
       borrowerName: "",
+      phoneNumber: "", // Thêm trường số điện thoại
       purpose: "",
       quantity: 1,
       status: "active"
@@ -74,6 +75,24 @@ export function BookingForm({ deviceId, periodId, selectedDate, onSuccess }: Boo
               <FormLabel>Tên người mượn</FormLabel>
               <FormControl>
                 <Input placeholder="Nhập tên của bạn" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="phoneNumber"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Số điện thoại</FormLabel>
+              <FormControl>
+                <Input 
+                  type="tel"
+                  placeholder="Nhập số điện thoại (10 số)" 
+                  {...field} 
+                />
               </FormControl>
               <FormMessage />
             </FormItem>

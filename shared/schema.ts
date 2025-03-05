@@ -21,14 +21,20 @@ export const bookings = pgTable("bookings", {
   periodId: integer("period_id").notNull(),
   bookedDate: timestamp("booked_date").notNull(),
   borrowerName: text("borrower_name").notNull(),
+  phoneNumber: text("phone_number").notNull(), // Thêm số điện thoại
   purpose: text("purpose").notNull(),
   quantity: integer("quantity").notNull(), // Số lượng iPad cần mượn
   status: text("status").notNull().default("active"), // active, completed, cancelled
 });
 
+// Create validation schemas
 export const insertDeviceSchema = createInsertSchema(devices).omit({ id: true });
 export const insertPeriodSchema = createInsertSchema(periods).omit({ id: true });
-export const insertBookingSchema = createInsertSchema(bookings).omit({ id: true });
+export const insertBookingSchema = createInsertSchema(bookings)
+  .omit({ id: true })
+  .extend({
+    phoneNumber: z.string().regex(/^[0-9]{10}$/, "Số điện thoại phải có 10 chữ số")
+  });
 
 export type Device = typeof devices.$inferSelect;
 export type Period = typeof periods.$inferSelect;
