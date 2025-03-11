@@ -13,9 +13,10 @@ export interface IStorage {
 
   // Bookings
   getBookings(date: Date): Promise<Booking[]>;
-  getAllBookings(): Promise<Booking[]>; // Thêm phương thức mới
+  getAllBookings(): Promise<Booking[]>;
   createBooking(booking: InsertBooking): Promise<Booking>;
   getBooking(id: number): Promise<Booking | undefined>;
+  updateBookingStatus(id: number, status: string): Promise<Booking>; // Thêm phương thức mới
 }
 
 export class MemStorage implements IStorage {
@@ -112,6 +113,15 @@ export class MemStorage implements IStorage {
 
   async getBooking(id: number): Promise<Booking | undefined> {
     return this.bookings.get(id);
+  }
+
+  async updateBookingStatus(id: number, status: string): Promise<Booking> {
+    const booking = await this.getBooking(id);
+    if (!booking) throw new Error("Booking not found");
+
+    const updatedBooking = { ...booking, status };
+    this.bookings.set(id, updatedBooking);
+    return updatedBooking;
   }
 }
 

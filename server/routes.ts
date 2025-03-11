@@ -27,6 +27,8 @@ export async function registerRoutes(app: Express) {
   // Get all bookings (for admin)
   app.get("/api/bookings", async (_req, res) => {
     const bookings = await storage.getAllBookings();
+    // Sắp xếp theo thời gian giảm dần (mới nhất lên đầu)
+    bookings.sort((a, b) => new Date(b.bookedDate).getTime() - new Date(a.bookedDate).getTime());
     res.json(bookings);
   });
 
@@ -36,7 +38,6 @@ export async function registerRoutes(app: Express) {
       const parseResult = insertBookingSchema.safeParse(req.body);
 
       if (!parseResult.success) {
-        // Chuyển đổi lỗi Zod thành thông báo dễ đọc
         const errorMessage = fromZodError(parseResult.error);
         console.log("Validation error:", errorMessage);
         return res.status(400).json({ 
@@ -53,6 +54,31 @@ export async function registerRoutes(app: Express) {
       console.error("Booking error:", error);
       res.status(400).json({ 
         error: "Không thể tạo đăng ký mượn",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
+    }
+  });
+
+  // Update booking status
+  app.patch("/api/bookings/:id/status", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { status } = req.body;
+
+      if (!["active", "completed"].includes(status)) {
+        return res.status(400).json({ error: "Trạng thái không hợp lệ" });
+      }
+
+      const booking = await storage.updateBookingStatus(id, status);
+      if (status === "completed") {
+        await storage.updateDeviceStatus(booking.deviceId, "available");
+      }
+
+      res.json(booking);
+    } catch (error) {
+      console.error("Update status error:", error);
+      res.status(400).json({ 
+        error: "Không thể cập nhật trạng thái",
         details: error instanceof Error ? error.message : "Unknown error"
       });
     }

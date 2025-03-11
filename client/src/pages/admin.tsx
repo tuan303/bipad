@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -9,15 +9,43 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { Booking } from "@shared/schema";
 
 export default function Admin() {
   const [selectedDate] = useState<Date>(new Date());
+  const { toast } = useToast();
 
   const { data: bookings = [] } = useQuery<Booking[]>({
     queryKey: ["/api/bookings", selectedDate.toISOString()]
   });
+
+  const updateStatusMutation = useMutation({
+    mutationFn: async ({ id, status }: { id: number; status: string }) => {
+      await apiRequest("PATCH", `/api/bookings/${id}/status`, { status });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/bookings"] });
+      toast({
+        title: "Thành công",
+        description: "Đã cập nhật trạng thái đăng ký mượn",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Lỗi",
+        description: "Không thể cập nhật trạng thái",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleUpdateStatus = (id: number) => {
+    updateStatusMutation.mutate({ id, status: "completed" });
+  };
 
   return (
     <div className="container mx-auto py-6">
@@ -36,6 +64,7 @@ export default function Admin() {
                 <TableHead>Số lượng</TableHead>
                 <TableHead>Mục đích sử dụng</TableHead>
                 <TableHead>Trạng thái</TableHead>
+                <TableHead>Thao tác</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -55,6 +84,18 @@ export default function Admin() {
                     >
                       {booking.status === 'active' ? 'Đang mượn' : 'Đã trả'}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {booking.status === 'active' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleUpdateStatus(booking.id)}
+                        disabled={updateStatusMutation.isPending}
+                      >
+                        Đánh dấu đã trả
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
