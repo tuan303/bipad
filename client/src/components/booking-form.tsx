@@ -43,22 +43,29 @@ export function BookingForm({ deviceId, periodId, selectedDate, onSuccess }: Boo
 
   const mutation = useMutation({
     mutationFn: async (data: any) => {
-      const res = await apiRequest("POST", "/api/bookings", data);
-      return res.json();
+      try {
+        const res = await apiRequest("POST", "/api/bookings", data);
+        const result = await res.json();
+        return result;
+      } catch (error: any) {
+        // Xử lý và hiển thị lỗi chi tiết từ server
+        const errorData = await error.response?.json();
+        throw new Error(errorData?.details || error.message);
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/bookings"] });
       queryClient.invalidateQueries({ queryKey: ["/api/devices"] });
       toast({
-        title: "Success",
+        title: "Thành công",
         description: "Đăng ký mượn iPad thành công",
       });
       onSuccess();
     },
-    onError: () => {
+    onError: (error: Error) => {
       toast({
-        title: "Error",
-        description: "Không thể đăng ký mượn iPad",
+        title: "Lỗi",
+        description: error.message || "Không thể đăng ký mượn iPad",
         variant: "destructive",
       });
     }
@@ -94,7 +101,7 @@ export function BookingForm({ deviceId, periodId, selectedDate, onSuccess }: Boo
                   {...field} 
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-red-500" />
             </FormItem>
           )}
         />

@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer } from "http";
 import { storage } from "./storage";
 import { insertBookingSchema } from "@shared/schema";
+import { fromZodError } from "zod-validation-error";
 
 export async function registerRoutes(app: Express) {
   // Get all devices
@@ -26,12 +27,28 @@ export async function registerRoutes(app: Express) {
   // Create a new booking
   app.post("/api/bookings", async (req, res) => {
     try {
-      const booking = insertBookingSchema.parse(req.body);
+      const parseResult = insertBookingSchema.safeParse(req.body);
+
+      if (!parseResult.success) {
+        // Chuyển đổi lỗi Zod thành thông báo dễ đọc
+        const errorMessage = fromZodError(parseResult.error);
+        console.log("Validation error:", errorMessage);
+        return res.status(400).json({ 
+          error: "Dữ liệu không hợp lệ",
+          details: errorMessage.message
+        });
+      }
+
+      const booking = parseResult.data;
       const newBooking = await storage.createBooking(booking);
       await storage.updateDeviceStatus(booking.deviceId, "borrowed");
       res.json(newBooking);
     } catch (error) {
-      res.status(400).json({ error: "Invalid booking data" });
+      console.error("Booking error:", error);
+      res.status(400).json({ 
+        error: "Không thể tạo đăng ký mượn",
+        details: error instanceof Error ? error.message : "Unknown error"
+      });
     }
   });
 
