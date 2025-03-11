@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
+import { HelpDialog } from "@/components/help-dialog";
+import { ListChecks } from "lucide-react";
 import type { Booking } from "@shared/schema";
 
 export default function Admin() {
@@ -50,8 +52,48 @@ export default function Admin() {
   return (
     <div className="container mx-auto py-6">
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Quản lý đăng ký mượn iPad</CardTitle>
+          <HelpDialog
+            title="Hướng dẫn quản lý đăng ký mượn"
+            description="Cách sử dụng trang quản lý đăng ký mượn iPad"
+          >
+            <div className="space-y-4">
+              <div className="flex items-start gap-2">
+                <ListChecks className="h-5 w-5 mt-0.5 text-primary" />
+                <div>
+                  <h4 className="font-medium">Xem danh sách đăng ký</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Danh sách được sắp xếp theo thời gian, với các đăng ký mới nhất hiển thị đầu tiên.
+                    Mỗi đăng ký hiển thị đầy đủ thông tin người mượn, thời gian và trạng thái.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2">
+                <ListChecks className="h-5 w-5 mt-0.5 text-primary" />
+                <div>
+                  <h4 className="font-medium">Cập nhật trạng thái</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Khi người dùng trả iPad, nhấn nút "Đánh dấu đã trả" để cập nhật trạng thái.
+                    Hệ thống sẽ tự động cập nhật số lượng iPad có sẵn.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2">
+                <ListChecks className="h-5 w-5 mt-0.5 text-primary" />
+                <div>
+                  <h4 className="font-medium">Theo dõi trạng thái</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Các trạng thái đăng ký:
+                    - "Đang mượn": iPad đang được sử dụng
+                    - "Đã trả": iPad đã được trả lại
+                  </p>
+                </div>
+              </div>
+            </div>
+          </HelpDialog>
         </CardHeader>
         <CardContent>
           <Table>
