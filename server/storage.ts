@@ -13,6 +13,7 @@ export interface IStorage {
 
   // Bookings
   getBookings(date: Date): Promise<Booking[]>;
+  getAllBookings(): Promise<Booking[]>; // Thêm phương thức mới
   createBooking(booking: InsertBooking): Promise<Booking>;
   getBooking(id: number): Promise<Booking | undefined>;
 }
@@ -96,6 +97,10 @@ export class MemStorage implements IStorage {
       const bookingDate = new Date(booking.bookedDate);
       return bookingDate.toDateString() === date.toDateString();
     });
+  }
+
+  async getAllBookings(): Promise<Booking[]> {
+    return Array.from(this.bookings.values());
   }
 
   async createBooking(booking: InsertBooking): Promise<Booking> {

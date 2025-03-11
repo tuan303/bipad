@@ -24,6 +24,12 @@ export async function registerRoutes(app: Express) {
     res.json(bookings);
   });
 
+  // Get all bookings (for admin)
+  app.get("/api/bookings", async (_req, res) => {
+    const bookings = await storage.getAllBookings();
+    res.json(bookings);
+  });
+
   // Create a new booking
   app.post("/api/bookings", async (req, res) => {
     try {
