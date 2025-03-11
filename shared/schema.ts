@@ -33,7 +33,8 @@ export const insertPeriodSchema = createInsertSchema(periods).omit({ id: true })
 export const insertBookingSchema = createInsertSchema(bookings)
   .omit({ id: true })
   .extend({
-    phoneNumber: z.string().regex(/^[0-9]{10}$/, "Số điện thoại phải có 10 chữ số")
+    phoneNumber: z.string().regex(/^[0-9]{10}$/, "Số điện thoại phải có 10 chữ số"),
+    bookedDate: z.string().transform((str) => new Date(str)) // Chuyển đổi string sang Date
   });
 
 export type Device = typeof devices.$inferSelect;

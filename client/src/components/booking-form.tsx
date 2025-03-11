@@ -32,9 +32,9 @@ export function BookingForm({ deviceId, periodId, selectedDate, onSuccess }: Boo
     defaultValues: {
       deviceId,
       periodId,
-      bookedDate: selectedDate,
+      bookedDate: selectedDate.toISOString(), // Chuyển đổi Date sang ISO string
       borrowerName: "",
-      phoneNumber: "", // Thêm trường số điện thoại
+      phoneNumber: "",
       purpose: "",
       quantity: 1,
       status: "active"
@@ -48,7 +48,6 @@ export function BookingForm({ deviceId, periodId, selectedDate, onSuccess }: Boo
         const result = await res.json();
         return result;
       } catch (error: any) {
-        // Xử lý và hiển thị lỗi chi tiết từ server
         const errorData = await error.response?.json();
         throw new Error(errorData?.details || error.message);
       }
