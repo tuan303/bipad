@@ -1,4 +1,8 @@
-import { type Device, type Period, type Booking, type InsertDevice, type InsertPeriod, type InsertBooking } from "@shared/schema";
+import { type Device, type Period, type Booking, type User, type InsertDevice, type InsertPeriod, type InsertBooking, type InsertUser } from "@shared/schema";
+import session from "express-session";
+import createMemoryStore from "memorystore";
+
+const MemoryStore = createMemoryStore(session);
 
 export interface IStorage {
   // Devices
@@ -16,26 +20,47 @@ export interface IStorage {
   getAllBookings(): Promise<Booking[]>;
   createBooking(booking: InsertBooking): Promise<Booking>;
   getBooking(id: number): Promise<Booking | undefined>;
-  updateBookingStatus(id: number, status: string): Promise<Booking>; // Thêm phương thức mới
+  updateBookingStatus(id: number, status: string): Promise<Booking>;
+
+  // Users
+  getUser(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
+
+  // Session store
+  sessionStore: session.Store;
 }
 
 export class MemStorage implements IStorage {
   private devices: Map<number, Device>;
   private periods: Map<number, Period>;
   private bookings: Map<number, Booking>;
+  private users: Map<number, User>;
   private currentId: { [key: string]: number };
+  public sessionStore: session.Store;
 
   constructor() {
     this.devices = new Map();
     this.periods = new Map();
     this.bookings = new Map();
-    this.currentId = { devices: 1, periods: 1, bookings: 1 };
+    this.users = new Map();
+    this.currentId = { devices: 1, periods: 1, bookings: 1, users: 1 };
+    this.sessionStore = new MemoryStore({
+      checkPeriod: 86400000 // Clear expired entries every 24h
+    });
 
     // Initialize with sample data
     this.initSampleData();
   }
 
   private initSampleData() {
+    // Add default admin user
+    this.createUser({
+      username: "admin",
+      password: "admin",
+      role: "admin"
+    });
+
     // Add 80 iPads
     const sampleDevices: InsertDevice[] = Array.from({ length: 80 }, (_, i) => ({
       name: `iPad ${i + 1}`,
@@ -122,6 +147,23 @@ export class MemStorage implements IStorage {
     const updatedBooking = { ...booking, status };
     this.bookings.set(id, updatedBooking);
     return updatedBooking;
+  }
+
+  async getUser(id: number): Promise<User | undefined> {
+    return this.users.get(id);
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.username === username
+    );
+  }
+
+  async createUser(user: InsertUser & { role?: string }): Promise<User> {
+    const id = this.currentId.users++;
+    const newUser = { ...user, id, role: user.role || "admin" };
+    this.users.set(id, newUser);
+    return newUser;
   }
 }
 
