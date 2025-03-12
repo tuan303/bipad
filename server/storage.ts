@@ -70,15 +70,15 @@ export class MemStorage implements IStorage {
 
     // Add 9 school periods
     const samplePeriods: InsertPeriod[] = [
-      { name: "Tiết 1", startTime: "07:00", endTime: "07:45" },
-      { name: "Tiết 2", startTime: "07:50", endTime: "08:35" },
-      { name: "Tiết 3", startTime: "08:50", endTime: "09:35" },
-      { name: "Tiết 4", startTime: "09:50", endTime: "10:35" },
-      { name: "Tiết 5", startTime: "10:40", endTime: "11:25" },
+      { name: "Tiết 1", startTime: "07:40", endTime: "08:25" },
+      { name: "Tiết 2", startTime: "08:30", endTime: "09:15" },
+      { name: "Tiết 3", startTime: "09:30", endTime: "10:15" },
+      { name: "Tiết 4", startTime: "10:20", endTime: "11:05" },
+      { name: "Tiết 5", startTime: "11:10", endTime: "11:50" },
       { name: "Tiết 6", startTime: "13:30", endTime: "14:15" },
-      { name: "Tiết 7", startTime: "14:20", endTime: "15:05" },
-      { name: "Tiết 8", startTime: "15:20", endTime: "16:05" },
-      { name: "Tiết 9", startTime: "16:10", endTime: "16:55" }
+      { name: "Tiết 7", startTime: "14:20", endTime: "15:00" },
+      { name: "Tiết 8", startTime: "15:10", endTime: "15:50" },
+      { name: "Tiết 9", startTime: "15:55", endTime: "16:35" }
     ];
     samplePeriods.forEach(period => this.createPeriod(period));
   }
