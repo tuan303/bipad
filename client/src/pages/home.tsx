@@ -83,7 +83,7 @@ export default function Home() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Bảng đăng ký - {date.toLocaleDateString()}</CardTitle>
+          <CardTitle>Ngày đăng ký - {date.toLocaleDateString()}</CardTitle>
         </CardHeader>
         <CardContent>
           <CalendarGrid
