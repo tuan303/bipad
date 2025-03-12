@@ -131,10 +131,10 @@ export function BookingForm({ deviceId, periodId, selectedDate, onSuccess }: Boo
           name="purpose"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Mục đích sử dụng</FormLabel>
+              <FormLabel>Ghi chú</FormLabel>
               <FormControl>
                 <Textarea 
-                  placeholder="Nhập mục đích sử dụng"
+                  placeholder="Nhập ghi chú"
                   {...field} 
                 />
               </FormControl>
