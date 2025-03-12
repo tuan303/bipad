@@ -78,9 +78,9 @@ export function BookingForm({ deviceId, periodId, selectedDate, onSuccess }: Boo
           name="borrowerName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Tên người mượn</FormLabel>
+              <FormLabel>Họ tên người mượn</FormLabel>
               <FormControl>
-                <Input placeholder="Nhập tên của bạn" {...field} />
+                <Input placeholder="Nhập họ tên của bạn" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
